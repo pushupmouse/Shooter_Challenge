@@ -2,8 +2,7 @@ using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(InputHandler))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IMovable
 {
     #region Variables
     [Header("Movement")]
@@ -11,11 +10,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float deceleration = 30f;
     [SerializeField] private float maxSpeed = 10f;
     [SerializeField] private float velocityStopThreshold = 0.5f;
-
-    [Header("Dash")]
-    [SerializeField] private float dashForce = 20f;
-    [SerializeField] private float dashDuration = 0.2f;  // Dash duration
-    [SerializeField] private float dashCooldown = 1f;  // Dash cooldown duration
 
     //create a separate class
     [Header("Shooting")]
@@ -26,19 +20,12 @@ public class PlayerController : MonoBehaviour
     private float attackCooldown;
 
     private Rigidbody2D rb;
-    private InputHandler inputHandler;
-
-    private bool isDashing = false;
-    private float timeSinceDash = 0f; // Track the time since the last dash and cooldown
-
-    private Vector2 lastDirection = Vector2.right;
     private bool isFacingRight = true; // Default facing direction
     #endregion
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        inputHandler = GetComponent<InputHandler>();
     }
 
     //TODO: doesnt belong here
@@ -52,36 +39,15 @@ public class PlayerController : MonoBehaviour
         // Increment the fire timer every frame
         attackTimer += Time.deltaTime;
     }
+    
 
-    //handling movement
-    private void FixedUpdate()
+    public void Move(Vector2 moveDirection)
     {
-        // Update cooldown timer only when not dashing
-        if (!isDashing)
+        if (moveDirection != Vector2.zero)
         {
-            timeSinceDash += Time.deltaTime; // Only increment if not dashing
-        }
+            Flip(moveDirection.x);
 
-        // Handle dash state
-        if (isDashing)
-        {
-            timeSinceDash += Time.deltaTime;
-            if (timeSinceDash >= dashDuration)
-            {
-                isDashing = false;  // Dash ends after dashDuration
-            }
-            return; // Skip movement and dash logic while dashing
-        }
-
-        Vector2 inputValue = inputHandler.MovementInput;
-
-        if (inputValue != Vector2.zero)
-        {
-            lastDirection = inputValue;
-
-            Flip(inputValue.x);
-
-            rb.AddForce(inputValue * acceleration, ForceMode2D.Force);
+            rb.AddForce(moveDirection * acceleration, ForceMode2D.Force);
 
             if (rb.velocity.magnitude > maxSpeed)
             {
@@ -96,23 +62,6 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = Vector2.zero;
             }
-        }
-    }
-
-    public void Dash()
-    {
-        // Only perform the dash if it's off cooldown
-        if (timeSinceDash >= dashCooldown && !isDashing)
-        {
-            Vector2 dashDirection = inputHandler.MovementInput != Vector2.zero
-                                    ? inputHandler.MovementInput.normalized
-                                    : lastDirection;
-
-            isDashing = true;
-            rb.AddForce(dashDirection * dashForce, ForceMode2D.Impulse);
-
-            // Reset the dash timer
-            timeSinceDash = 0f;
         }
     }
 
@@ -159,4 +108,39 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    //public void Dash()
+    //{
+    //    // Only perform the dash if it's off cooldown
+    //    if (timeSinceDash >= dashCooldown && !isDashing)
+    //    {
+    //        Vector2 dashDirection = inputHandler.MovementInput != Vector2.zero
+    //                                ? inputHandler.MovementInput.normalized
+    //                                : lastDirection;
+
+    //        isDashing = true;
+    //        rb.AddForce(dashDirection * dashForce, ForceMode2D.Impulse);
+
+    //        // Reset the dash timer
+    //        timeSinceDash = 0f;
+    //    }
+    //some other logic for dash
+    //// Update cooldown timer only when not dashing
+    //if (!isDashing)
+    //{
+    //    timeSinceDash += Time.deltaTime; // Only increment if not dashing
+    //}
+
+    //// Handle dash state
+    //if (isDashing)
+    //{
+    //    timeSinceDash += Time.deltaTime;
+    //    if (timeSinceDash >= dashDuration)
+    //    {
+    //        isDashing = false;  // Dash ends after dashDuration
+    //    }
+    //    return; // Skip movement and dash logic while dashing
+    //}
+    //}
+
 }
