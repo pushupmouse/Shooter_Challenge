@@ -25,12 +25,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 343204884557735621}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.45, y: 0.13, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 7322843652708781186}
+  m_Father: {fileID: 5451356204842061286}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &608596064104496416
 SpriteRenderer:
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 5451356204842061286}
   - component: {fileID: 6632003282443934153}
   m_Layer: 0
-  m_Name: Model
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,7 +113,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4465793888947797062}
   m_Father: {fileID: 7322843652708781186}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6632003282443934153
@@ -202,7 +203,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5451356204842061286}
-  - {fileID: 4465793888947797062}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &6414790655481279998
@@ -295,6 +295,6 @@ MonoBehaviour:
   deceleration: 30
   maxSpeed: 10
   velocityStopThreshold: 0.5
-  dashForce: 20
-  dashDuration: 0.2
-  dashCooldown: 1
+  bullet: {fileID: 0}
+  target: {fileID: 0}
+  attackSpeed: 0.2

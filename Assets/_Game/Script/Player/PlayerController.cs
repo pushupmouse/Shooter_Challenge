@@ -14,18 +14,21 @@ public class PlayerController : MonoBehaviour, IMovable
     //create a separate class
     [Header("Shooting")]
     [SerializeField] private Bullet bullet;
-    [SerializeField] private GameObject target;
     [SerializeField] private float attackSpeed = 0.2f; // Time between shots
     private float attackTimer = 0f; // Timer to track elapsed time for firing
     private float attackCooldown;
+    private Enemy target;
 
     private Rigidbody2D rb;
+    private Transform t;
     private bool isFacingRight = true; // Default facing direction
     #endregion
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        t = transform;
     }
 
     //TODO: doesnt belong here
@@ -71,13 +74,13 @@ public class PlayerController : MonoBehaviour, IMovable
         {
             // Face right
             isFacingRight = true;
-            transform.rotation = Quaternion.Euler(0, 0, 0);
+            t.rotation = Quaternion.Euler(0, 0, 0);
         }
         else if (horizontalInput < 0 && isFacingRight)
         {
             // Face left
             isFacingRight = false;
-            transform.rotation = Quaternion.Euler(0, 180, 0);
+            t.rotation = Quaternion.Euler(0, 180, 0);
         }
     }
 
@@ -87,10 +90,17 @@ public class PlayerController : MonoBehaviour, IMovable
         // If enough time has passed since the last fire, fire again
         if (attackTimer >= attackCooldown)
         {
-            Vector2 shootDirection = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
+            target = GetTarget();
+
+            if (target == null)
+            {
+                return;
+            }
+
+            Vector2 shootDirection = ((Vector2)target.transform.position - (Vector2)t.position).normalized;
 
             // Spawn the bullet using object pool
-            Bullet bulletObject = ObjectPoolManager.Instance.SpawnObject<Bullet>(bullet.gameObject, transform.position, Quaternion.identity.normalized, PoolType.GameObject);
+            Bullet bulletObject = ObjectPoolManager.Instance.SpawnObject<Bullet>(bullet.gameObject, t.position, Quaternion.identity.normalized, PoolType.GameObject);
 
             if (bulletObject != null)
             {
@@ -107,6 +117,11 @@ public class PlayerController : MonoBehaviour, IMovable
             attackTimer = 0f; // Reset timer
         }
 
+    }
+
+    private Enemy GetTarget()
+    {
+        return EnemyManager.Instance.GetClosestEnemy(t.position, 10f);
     }
 
     //public void Dash()

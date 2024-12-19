@@ -5,6 +5,7 @@ public class InputHandler : MonoBehaviour
 {
     #region Variables
     private PlayerController playerController;
+    private IMovable movable;
     private PlayerInputActions playerInputActions;
 
     private Vector2 moveDirection;
@@ -14,6 +15,8 @@ public class InputHandler : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+
+        movable = GetComponent<IMovable>();
 
         playerInputActions = new PlayerInputActions();
         //enable the input from player map
@@ -38,7 +41,7 @@ public class InputHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        GetComponent<IMovable>().Move(moveDirection);
+        movable.Move(moveDirection);
     }
 
     //private void OnDashPerformed(InputAction.CallbackContext context)

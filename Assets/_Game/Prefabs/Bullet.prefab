@@ -109,7 +109,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 538139a035ddd7147b1a650522389866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lifeTime: 4
   bulletSpeed: 20
+  damage: 100
 --- !u!1 &7816724913614162625
 GameObject:
   m_ObjectHideFlags: 0
