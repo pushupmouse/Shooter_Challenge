@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour, IMovable
     [Header("Shooting")]
     [SerializeField] private Bullet bullet;
     [SerializeField] private float attackSpeed = 0.2f; // Time between shots
+    [SerializeField] private float attackRange = 10f;
     private float attackTimer = 0f; // Timer to track elapsed time for firing
     private float attackCooldown;
     private Enemy target;
@@ -35,12 +37,18 @@ public class PlayerController : MonoBehaviour, IMovable
     private void Start()
     {
         attackCooldown = 1 / attackSpeed;
+        OnInit();
     }
 
     private void Update()
     {
         // Increment the fire timer every frame
         attackTimer += Time.deltaTime;
+    }
+
+    private void OnInit()
+    {
+        SpawnEnemyManager.Instance.AssignPlayer(this);
     }
     
 
@@ -105,7 +113,7 @@ public class PlayerController : MonoBehaviour, IMovable
             if (bulletObject != null)
             {
                 // Initialize the bullet with the direction
-                bulletObject.OnInit(shootDirection);
+                bulletObject.OnInit(shootDirection, gameObject.layer);
 
                 // Calculate the angle to rotate the bullet
                 float angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg;
@@ -121,7 +129,7 @@ public class PlayerController : MonoBehaviour, IMovable
 
     private Enemy GetTarget()
     {
-        return EnemyManager.Instance.GetClosestEnemy(t.position, 10f);
+        return SpawnEnemyManager.Instance.GetClosestEnemy(t.position, attackRange);
     }
 
     //public void Dash()

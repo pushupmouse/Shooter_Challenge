@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float damage = 10f;
 
     private Rigidbody2D rb;
+    private LayerMask collisionIgnoreLayer;
 
     private void Awake()
     {
@@ -26,13 +27,17 @@ public class Bullet : MonoBehaviour
     }
 
     // Public method to initialize the bullet with a direction and speed
-    public void OnInit(Vector2 direction)
+    public void OnInit(Vector2 direction, LayerMask collisionIgnoreLayer)
     {
+        this.collisionIgnoreLayer = collisionIgnoreLayer;
         rb.AddForce(direction.normalized * bulletSpeed, ForceMode2D.Impulse);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.layer == collisionIgnoreLayer)
+            return;
+
         ObjectPoolManager.Instance.ReturnObjectToPool(gameObject);
 
         IDamagable target = collision.GetComponent<IDamagable>();
